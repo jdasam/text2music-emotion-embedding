@@ -462,6 +462,14 @@ class CutMix(nn.Module):
         return 0
 
 
+
+class ViewAsReal(nn.Module):
+  def __init__(self) -> None:
+      super().__init__()
+  
+  def forward(self, x):
+    return torch.view_as_real(x)
+
 #################################################
 # get augmentation sequences for model training #
 #################################################
@@ -486,6 +494,8 @@ def get_augmentation_sequence(config):
         no_augs.append(STFT(n_fft=config.n_fft,
                             hop_length=config.hop_length,
                             win_length=config.win_length))
+        augs.append(ViewAsReal())
+        no_augs.append(ViewAsReal())
 
         # Complex norm (complex spec -> spec)
         augs.append(ComplexNorm(power=2.0))
